@@ -1,0 +1,34 @@
+name: Notify Slack on Push
+
+on: push
+
+jobs:
+  slack-notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send notification to Slack
+        uses: rtCamp/action-slack-notify@v2.0.0
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+        with:
+          args: |
+            {
+              "text": "New commit pushed to <https://github.com/${{ github.repository }}|${{ github.repository }}> by ${{ github.actor }}",
+              "attachments": [
+                {
+                  "color": "#36a64f",
+                  "fields": [
+                    {
+                      "title": "Commit Message",
+                      "value": "${{ github.event.head_commit.message }}",
+                      "short": false
+                    },
+                    {
+                      "title": "Commit URL",
+                      "value": "<${{ github.event.head_commit.url }}|View Commit>",
+                      "short": false
+                    }
+                  ]
+                }
+              ]
+            }
